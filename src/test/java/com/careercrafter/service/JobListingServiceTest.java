@@ -59,13 +59,15 @@ public class JobListingServiceTest {
 
         category1 = new Category(1L, "IT", 1);
 
-        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1);
+        // JobListing all-args order: id, title, description, salary, isActive, employer, category, location
+        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1, "Hubli");
     }
 
     @Test
     public void getByIdTestPresent(){
 
-        JobListingRespDto respDto = new JobListingRespDto(1L, "Java Developer", 50000, "IT", "TechCorp");
+        // JobListingRespDto order: id, title, salary, location, categoryName, employerName
+        JobListingRespDto respDto = new JobListingRespDto(1L, "Java Developer", 50000, "Hubli", "IT", "TechCorp");
 
         when(jobListingRepository.getByIdWithNames(1L)).thenReturn(Optional.of(respDto));
 
@@ -88,7 +90,8 @@ public class JobListingServiceTest {
     @Test
     public void insertTest(){
 
-        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, 1L);
+        // JobListingReqDto canonical order: title, description, salary, location, categoryId
+        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, "Hubli", 1L);
 
         when(employerRepository.findByUser_Username("employer1")).thenReturn(Optional.of(employer1));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
@@ -107,7 +110,7 @@ public class JobListingServiceTest {
     @Test
     public void insertTestForInvalidEmployer(){
 
-        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, 1L);
+        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, "Hubli", 1L);
 
         when(employerRepository.findByUser_Username("ghost")).thenReturn(Optional.empty());
 
@@ -122,7 +125,7 @@ public class JobListingServiceTest {
     @Test
     public void insertTestForInvalidCategory(){
 
-        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, 99L);
+        JobListingReqDto dto = new JobListingReqDto("Java Developer", "Backend role", 50000, "Hubli", 99L);
 
         when(employerRepository.findByUser_Username("employer1")).thenReturn(Optional.of(employer1));
         when(categoryRepository.findById(99L)).thenReturn(Optional.empty());
@@ -139,8 +142,12 @@ public class JobListingServiceTest {
     public void updateTest(){
 
         when(jobListingRepository.findById(1L)).thenReturn(Optional.of(jobListing1));
+        // FIX: update() also looks up the category by dto.categoryId() before saving.
+        // This stub was missing, so categoryRepository.findById(1L) returned empty
+        // and the service threw "Category id invalid.." instead of updating.
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
 
-        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, 1L);
+        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, "Hubli", 1L);
 
         jobListingService.update("employer1", false, 1L, dto);
 
@@ -156,7 +163,7 @@ public class JobListingServiceTest {
 
         when(jobListingRepository.findById(99L)).thenReturn(Optional.empty());
 
-        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, 1L);
+        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, "Hubli", 1L);
 
         Assertions.assertEquals("JobListing id invalid",
                 Assertions.assertThrows(ResourceNotFoundException.class,
@@ -172,7 +179,7 @@ public class JobListingServiceTest {
 
         when(jobListingRepository.findById(1L)).thenReturn(Optional.of(jobListing1));
 
-        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, 1L);
+        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, "Hubli", 1L);
 
         Assertions.assertEquals("Not authorized to edit this listing",
                 Assertions.assertThrows(InvalidCredentialsException.class,
@@ -186,8 +193,10 @@ public class JobListingServiceTest {
     public void updateTestAllowedForAdmin(){
 
         when(jobListingRepository.findById(1L)).thenReturn(Optional.of(jobListing1));
+        // FIX: same missing stub as updateTest() above.
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
 
-        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, 1L);
+        JobListingReqDto dto = new JobListingReqDto("Senior Java Developer", "Updated desc", 70000, "Hubli", 1L);
 
         jobListingService.update("admin1", true, 1L, dto);
 

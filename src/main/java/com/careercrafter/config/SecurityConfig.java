@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -21,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -53,6 +55,11 @@ public class SecurityConfig {
                         // 3. Admin APIs
                         .requestMatchers(HttpMethod.POST, "/api/category/add").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/executive/add").hasAuthority("ADMIN")
+                        // FIX: previously missing - this left every /api/admin/** endpoint
+                        // (list/search/activate/deactivate/delete users) reachable by ANY
+                        // authenticated user (JOBSEEKER/EMPLOYER), not just ADMIN, because
+                        // it fell through to the .anyRequest().authenticated() catch-all below.
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
 
                         // 4. Employer APIs
                         .requestMatchers("/api/employer/de-activate").hasAnyAuthority("EMPLOYER", "ADMIN")

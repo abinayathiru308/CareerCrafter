@@ -43,7 +43,9 @@ public class SkillServiceTest {
     public void init(){
 
         jobSeekerUser1 = new User(1L, "seeker1", "pass123", Role.JOBSEEKER, true);
-        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "Java", null, true, jobSeekerUser1, new HashSet<>());
+
+        // JobSeeker all-args order: id, name, email, phone, skills, resumeUrl, isActive, user, skillSet
+        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "9876543210", "Java", null, true, jobSeekerUser1, new HashSet<>());
 
         skill1 = new Skill(1L, "Java");
     }

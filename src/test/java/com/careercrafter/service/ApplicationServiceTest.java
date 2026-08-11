@@ -6,7 +6,7 @@ import com.careercrafter.enums.Role;
 import com.careercrafter.exception.InvalidCredentialsException;
 import com.careercrafter.exception.ResourceNotFoundException;
 import com.careercrafter.model.*;
-        import com.careercrafter.repository.ApplicationRepository;
+import com.careercrafter.repository.ApplicationRepository;
 import com.careercrafter.repository.JobListingRepository;
 import com.careercrafter.repository.JobSeekerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -53,21 +53,27 @@ public class ApplicationServiceTest {
     public void init(){
 
         jobSeekerUser = new User(1L, "seeker1", "pass123", Role.JOBSEEKER, true);
-        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "Java", null, true, jobSeekerUser, new java.util.HashSet<>());
+
+        // JobSeeker all-args order: id, name, email, phone, skills, resumeUrl, isActive, user, skillSet
+        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "9876543210", "Java", null, true, jobSeekerUser, new java.util.HashSet<>());
 
         employerUser = new User(2L, "employer1", "pass123", Role.EMPLOYER, true);
         employer1 = new Employer(1L, "TechCorp", "Hubli", true, employerUser);
 
         category1 = new Category(1L, "IT", 1);
-        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1);
 
-        application1 = new Application(1L, "APPLIED", jobListing1, jobSeeker1);
+        // JobListing all-args order: id, title, description, salary, isActive, employer, category, location
+        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1, "Hubli");
+
+        // Application all-args order: id, status, batch, course, certifications, college, yearPassedOut, skills, jobListing, jobSeeker
+        application1 = new Application(1L, "APPLIED", "2020", "B.Tech", "None", "XYZ College", 2020, "Java", jobListing1, jobSeeker1);
     }
 
     @Test
     public void insertTest(){
 
-        ApplicationReqDto dto = new ApplicationReqDto(1L);
+        // ApplicationReqDto order: jobListingId, batch, course, certifications, college, yearPassedOut, skills
+        ApplicationReqDto dto = new ApplicationReqDto(1L, "2020", "B.Tech", "None", "XYZ College", 2020, "Java");
 
         when(jobSeekerRepository.findById(1L)).thenReturn(Optional.of(jobSeeker1));
         when(jobListingRepository.findById(1L)).thenReturn(Optional.of(jobListing1));
@@ -85,7 +91,7 @@ public class ApplicationServiceTest {
     @Test
     public void insertTestForInvalidJobSeeker(){
 
-        ApplicationReqDto dto = new ApplicationReqDto(1L);
+        ApplicationReqDto dto = new ApplicationReqDto(1L, "2020", "B.Tech", "None", "XYZ College", 2020, "Java");
 
         when(jobSeekerRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -100,7 +106,7 @@ public class ApplicationServiceTest {
     @Test
     public void insertTestForUnauthorizedUser(){
 
-        ApplicationReqDto dto = new ApplicationReqDto(1L);
+        ApplicationReqDto dto = new ApplicationReqDto(1L, "2020", "B.Tech", "None", "XYZ College", 2020, "Java");
 
         when(jobSeekerRepository.findById(1L)).thenReturn(Optional.of(jobSeeker1));
 
@@ -115,7 +121,7 @@ public class ApplicationServiceTest {
     @Test
     public void insertTestForInvalidJobListing(){
 
-        ApplicationReqDto dto = new ApplicationReqDto(99L);
+        ApplicationReqDto dto = new ApplicationReqDto(99L, "2020", "B.Tech", "None", "XYZ College", 2020, "Java");
 
         when(jobSeekerRepository.findById(1L)).thenReturn(Optional.of(jobSeeker1));
         when(jobListingRepository.findById(99L)).thenReturn(Optional.empty());
@@ -193,7 +199,8 @@ public class ApplicationServiceTest {
     @Test
     public void getByIdTest(){
 
-        ApplicationRespDto respDto = new ApplicationRespDto(1L, "APPLIED", "Java Developer", "TechCorp", "John");
+        // ApplicationRespDto order: applicationId, status, jobTitle, employerName, jobSeekerName, resumeUrl, batch, course, certifications, college, yearPassedOut, skills
+        ApplicationRespDto respDto = new ApplicationRespDto(1L, "APPLIED", "Java Developer", "TechCorp", "John", null, "2020", "B.Tech", "None", "XYZ College", 2020, "Java");
 
         when(applicationRepository.getOneById(1L)).thenReturn(Optional.of(respDto));
 

@@ -59,7 +59,9 @@ public class EmployerServiceTest {
         employer1 = new Employer(1L, "TechCorp", "Hubli", true, employerUser1);
 
         category1 = new Category(1L, "IT", 1);
-        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1);
+
+        // JobListing all-args order: id, title, description, salary, isActive, employer, category, location
+        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1, "Hubli");
     }
 
     @Test

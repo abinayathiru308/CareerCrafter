@@ -49,13 +49,16 @@ public class JobSeekerServiceTest {
     public void init(){
 
         jobSeekerUser1 = new User(1L, "seeker1", "pass123", Role.JOBSEEKER, true);
-        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "Java", null, true, jobSeekerUser1, new HashSet<>());
+
+        // JobSeeker all-args order: id, name, email, phone, skills, resumeUrl, isActive, user, skillSet
+        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "9876543210", "Java", null, true, jobSeekerUser1, new HashSet<>());
     }
 
     @Test
     public void addTest(){
 
-        JobSeekerDto dto = new JobSeekerDto("John", "john@gmail.com", "Java", "seeker1", "pass123");
+        // JobSeekerDto order: name, email, phone, skills, username, password
+        JobSeekerDto dto = new JobSeekerDto("John", "john@gmail.com", "9876543210", "Java", "seeker1", "pass123");
 
         when(passwordEncoder.encode("pass123")).thenReturn("encodedPass");
         when(userRepository.save(any(User.class))).thenReturn(jobSeekerUser1);
@@ -133,7 +136,7 @@ public class JobSeekerServiceTest {
 
         when(jobSeekerRepository.fetchById(1L)).thenReturn(Optional.of(jobSeeker1));
 
-        JobSeekerDto dto = new JobSeekerDto("John Doe", "johnd@gmail.com", "Java, Spring", "seeker1", "pass123");
+        JobSeekerDto dto = new JobSeekerDto("John Doe", "johnd@gmail.com", "9876543210", "Java, Spring", "seeker1", "pass123");
 
         jobSeekerService.update("seeker1", false, 1L, dto);
 
@@ -148,7 +151,7 @@ public class JobSeekerServiceTest {
 
         when(jobSeekerRepository.fetchById(1L)).thenReturn(Optional.of(jobSeeker1));
 
-        JobSeekerDto dto = new JobSeekerDto("John Doe", "johnd@gmail.com", "Java, Spring", "seeker1", "pass123");
+        JobSeekerDto dto = new JobSeekerDto("John Doe", "johnd@gmail.com", "9876543210", "Java, Spring", "seeker1", "pass123");
 
         Assertions.assertEquals("Not authorized to update this profile",
                 Assertions.assertThrows(InvalidCredentialsException.class,

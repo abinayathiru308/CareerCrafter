@@ -4,7 +4,7 @@ import com.careercrafter.dto.response.SavedJobRespDto;
 import com.careercrafter.enums.Role;
 import com.careercrafter.exception.ResourceNotFoundException;
 import com.careercrafter.model.*;
-        import com.careercrafter.repository.JobListingRepository;
+import com.careercrafter.repository.JobListingRepository;
 import com.careercrafter.repository.JobSeekerRepository;
 import com.careercrafter.repository.SavedJobRepository;
 import org.junit.jupiter.api.Assertions;
@@ -50,13 +50,17 @@ public class SavedJobServiceTest {
     public void init(){
 
         jobSeekerUser1 = new User(1L, "seeker1", "pass123", Role.JOBSEEKER, true);
-        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "Java", null, true, jobSeekerUser1, new HashSet<>());
+
+        // JobSeeker all-args order: id, name, email, phone, skills, resumeUrl, isActive, user, skillSet
+        jobSeeker1 = new JobSeeker(1L, "John", "john@gmail.com", "9876543210", "Java", null, true, jobSeekerUser1, new HashSet<>());
 
         employerUser1 = new User(2L, "employer1", "pass123", Role.EMPLOYER, true);
         employer1 = new Employer(1L, "TechCorp", "Hubli", true, employerUser1);
 
         category1 = new Category(1L, "IT", 1);
-        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1);
+
+        // JobListing all-args order: id, title, description, salary, isActive, employer, category, location
+        jobListing1 = new JobListing(1L, "Java Developer", "Backend role", 50000, true, employer1, category1, "Hubli");
 
         savedJob1 = new SavedJob(1L, null, jobSeeker1, jobListing1);
     }
