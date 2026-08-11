@@ -1,6 +1,6 @@
 package com.careercrafter.model;
 import jakarta.persistence.*;
-        import lombok.*;
+import lombok.*;
 @Entity
 @Getter
 @Setter
@@ -12,6 +12,12 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String status;
+    private String batch;
+    private String course;
+    private String certifications;
+    private String college;
+    private int yearPassedOut;
+    private String skills;
     @ManyToOne
     @JoinColumn(name = "joblisting_id", nullable = false)
     private JobListing jobListing;

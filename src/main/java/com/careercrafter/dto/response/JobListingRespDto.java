@@ -4,6 +4,7 @@ public record JobListingRespDto(
         long id,
         String title,
         double salary,
+        String location,
         String categoryName,
         String employerName
 ) {}

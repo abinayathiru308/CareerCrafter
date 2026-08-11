@@ -6,6 +6,7 @@ public record JobListingReqDto(
         @NotBlank(message = "Field is mandatory")
         String description,
         double salary,
+        String location,
         long categoryId
 ) {
 }

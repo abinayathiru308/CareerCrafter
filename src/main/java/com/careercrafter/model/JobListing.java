@@ -32,4 +32,7 @@ public class JobListing {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column(length = 100)
+    private String location;
+
 }

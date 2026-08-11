@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class JwtUtility {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encodeToString(SECRET_KEY.getBytes()))
+                .setSigningKey(SECRET_KEY.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
     }

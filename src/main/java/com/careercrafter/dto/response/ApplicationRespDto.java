@@ -6,7 +6,14 @@ public record ApplicationRespDto(
         String status,
         String jobTitle,
         String employerName,
-        String jobSeekerName
+        String jobSeekerName,
+        String resumeUrl,
+        String batch,
+        String course,
+        String certifications,
+        String college,
+        Integer yearPassedOut,
+        String skills
 
 ) {
 }
